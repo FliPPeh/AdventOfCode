@@ -1,6 +1,5 @@
 #![feature(io)]
-
-use std::io::{Read};
+use std::io::Read; // chars()
 
 fn main() {
     let mut level: i32 = 0;
@@ -8,30 +7,21 @@ fn main() {
     let mut i: u32 = 0;
 
     for c in std::io::stdin().chars() {
-        i += 1;
-
         match c.ok() {
-            Some('(') => {
-                level += 1
-            },
-            Some(')') => {
-                level -= 1;
+            None => panic!("invalid input :(!"),
 
-                if level < 0 && basement.is_none() {
-                    basement = Some(i);
-                }
-            },
+            Some('(') => level += 1,
+            Some(')') => level -= 1,
+            Some('\r') | Some('\n') => continue,
 
-            Some('\n') | Some('\r') => {
-                continue;
-            }
+            Some(x) => panic!("bad command: {}", x),
+        }
 
-            Some(x) => {
-                panic!("bad command: {}", x);
-            }
+        if basement.is_none() {
+            i += 1;
 
-            None => {
-                panic!("invalid input :(!");
+            if level < 0 {
+                basement = Some(i);
             }
         }
     }
