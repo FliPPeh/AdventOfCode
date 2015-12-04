@@ -60,6 +60,7 @@ int main(int argc, char **argv)
 
 		if (!strncmp(md5(input, strlen(input), hash), ZEROS, n)) {
 			printf("Ho ho ho: %s = %s\n", input, hash);
+			return 0;
 		}
 	}
 }
