@@ -1,10 +1,8 @@
 use std::*;
 
 fn is_nice_v1(s: &str) -> bool {
-    for bw in ["ab", "cd", "pq", "xy"].as_ref() {
-        if s.contains(bw) {
-            return false;
-        }
+    if ["ab", "cd", "pq", "xy"].iter().any(|bw| s.contains(bw)) {
+        return false;
     }
 
     const VOWELS: &'static str = "aeiou";
@@ -30,18 +28,25 @@ fn is_nice_v1(s: &str) -> bool {
 }
 
 fn is_nice_v2(s: &str) -> bool {
-    let mut has_repeating = false;
+    let mut has_rep= false;
     let mut has_pair = false;
 
-    for i in 0 .. s.len() - 2 {
-        let pair: String = s.chars().skip(i).take(2).collect();
-        let rest: String = s.chars().skip(i + 2).collect();
+    let mut c = s.chars();
 
-        has_pair |= rest.contains(&pair);
-        has_repeating |= s.chars().nth(i) == s.chars().nth(i+2);
+    loop {
+        // Get an iterator to the current position, before next()ing c
+        let i = c.clone();
 
-        if has_pair && has_repeating {
-            return true;
+        if let cr@Some(_) = c.next() {
+            let pair: String = i.clone().take(2).collect();
+            let rest: String = i.clone().skip(2).collect();
+
+            if !has_pair && rest.clone().contains(&pair) { has_pair = true; }
+            if !has_rep  && cr == i.clone().nth(2)       { has_rep = true; }
+
+            if has_pair && has_rep { return true; }
+        } else {
+            break;
         }
     }
 
