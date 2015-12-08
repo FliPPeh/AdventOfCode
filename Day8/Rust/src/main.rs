@@ -1,7 +1,7 @@
 enum ReadState {
     Simple,
     EscapeInit,
-    EscapeSequence(i8)
+    EscapeSeq(i8)
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -22,21 +22,13 @@ fn count(s: &str) -> Triplet {
     for c in s.chars() {
         match state {
             ReadState::Simple => {
-                match c {
-                    '"' => { r.2 += 1; },
-
-                    '\\' => {
-                        r.2 += 1; // \\
-                        r.0 += 1; // result of escape
-
-                        state = ReadState::EscapeInit;
-                    },
-
-                    _ => { // any old character
-                        r.0 += 1;
-                    }
-                }
+                if c == '\\' { state = ReadState::EscapeInit; }
+                if c == '"' || c == '\\' { r.2 += 1; }
+                if c != '"' || c == '\\' { r.0 += 1; }
             },
+
+            ReadState::EscapeSeq(1) => state = ReadState::Simple,
+            ReadState::EscapeSeq(n) => state = ReadState::EscapeSeq(n - 1),
 
             ReadState::EscapeInit => {
                 state = match c {
@@ -46,17 +38,10 @@ fn count(s: &str) -> Triplet {
                     },
 
                     // Start of \x sequence, goes on for 2 more chars
-                    'x' => ReadState::EscapeSequence(2),
+                    'x' => ReadState::EscapeSeq(2),
                     _   => panic!("illegal escape: {}", c)
                 }
             },
-
-            ReadState::EscapeSequence(n) =>
-                state = if n == 1 {
-                    ReadState::Simple
-                } else {
-                    ReadState::EscapeSequence(n - 1)
-                }
         }
     }
 
@@ -72,13 +57,10 @@ fn main() {
         let mut line = String::new();
 
         match std::io::stdin().read_line(&mut line) {
+            Err(e) => panic!("error: {}", e),
+
             Ok(0) => break,
-            Ok(_) => {
-                total = total + count(&line.trim());
-
-            },
-
-            Err(e) => panic!("error: {}", e)
+            Ok(_) => total = total + count(&line.trim())
         }
     }
 
