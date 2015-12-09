@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <unordered_set>
@@ -23,9 +24,9 @@ namespace std {
 };
 
 namespace {
-void remove_rn(char *s)
+void remove_rn(std::string& s)
 {
-	size_t const len = std::strlen(s);
+	size_t const len = s.size();
 	size_t const l1 = len - 1;
 	size_t const l2 = len - 2;
 
@@ -48,34 +49,38 @@ int main(int argc, char **argv)
 	};
 
 	do {
-		char buf[512] = {0};
+		std::string line;
+		std::getline(std::cin, line);
 
-		if (std::fgets(buf, sizeof(buf), stdin)) {
-			char a[32], b[32];
-			int d;
-
-			remove_rn(buf);
-
-			if (std::sscanf(buf, "%32s to %32s = %d", &a, &b, &d) != 3) {
-				std::fprintf(stderr, "aaaaaaaaa: %s", buf);
-				return 1;
-			}
-
-			insert_place(a);
-			insert_place(b);
-
-			dists.insert(std::make_pair(std::make_tuple(a, b), d));
-			dists.insert(std::make_pair(std::make_tuple(b, a), d));
-
-			std::printf("'%s' -> '%s': %+d\n", a, b, d);
+		if (!std::cin.good()) {
+			break;
 		}
-	} while (!std::feof(stdin));
+
+		remove_rn(line);
+
+		char a[32], b[32];
+		int d;
+
+		if (std::sscanf(line.c_str(), "%32s to %32s = %d", &a, &b, &d) != 3) {
+			std::cerr << "aaaaaaaaa: " << line << std::endl;
+			return 1;
+		}
+
+		insert_place(a);
+		insert_place(b);
+
+		dists.insert(std::make_pair(std::make_tuple(a, b), d));
+		dists.insert(std::make_pair(std::make_tuple(b, a), d));
+	} while (std::cin.good());
 
 	for (auto const& dist : dists) {
-		std::printf("%s -> %s = %d\n",
-			std::get<0>(dist.first).c_str(),
-			std::get<1>(dist.first).c_str(),
-			dist.second);
+		std::cout
+			<< std::get<0>(dist.first)
+			<< " -> "
+			<< std::get<1>(dist.first)
+			<< " = "
+			<< dist.second
+			<< std::endl;
 	}
 
 	std::sort(std::begin(places), std::end(places));
@@ -84,15 +89,16 @@ int main(int argc, char **argv)
 	int ma = 0;
 
 	do {
-		std::printf("Trying: ");
+		std::cout << "Trying: ";
 
 		for (auto const& p : places) {
-			std::printf("%s, ", p.c_str());
+			std::cout << p << " ";
 		}
 
-		std::printf("\n");
+		std::cout << std::endl;
 
 		int d = 0;
+
 		for (int i = 0; i < places.size() - 1; ++i) {
 			d += dists[std::make_tuple(places[i], places[i + 1])];
 		}
@@ -102,5 +108,6 @@ int main(int argc, char **argv)
 
 	} while (std::next_permutation(std::begin(places), std::end(places)));
 
-	std::printf("Shortest: %d  Longest: %d\n", mi, ma);
+	std::cout << "Shortest: " << mi << std::endl;
+	std::cout << "Longest : " << ma << std::endl;
 }
