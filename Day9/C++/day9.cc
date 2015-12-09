@@ -1,14 +1,10 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <tuple>
 #include <limits>
-
-#include <cstdio>
-#include <cstring>
 
 namespace std {
 	template <typename T, typename U>
@@ -38,13 +34,14 @@ void remove_rn(std::string& s)
 int main(int argc, char **argv)
 {
 	std::vector<std::string> places{};
-	std::unordered_set<std::string> known{};
 	std::unordered_map<std::tuple<std::string, std::string>, int> dists{};
 
 	auto insert_place = [&] (std::string const& p) {
-		if (known.find(p) == std::end(known)) {
+		if (std::find(
+				std::begin(places),
+				std::end(places), p) == std::end(places)) {
+
 			places.push_back(p);
-			known.insert(p);
 		}
 	};
 
