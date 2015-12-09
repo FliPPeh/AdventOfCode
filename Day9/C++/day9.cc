@@ -86,6 +86,7 @@ int main(int argc, char **argv)
 	int ma = 0;
 
 	do {
+		/*
 		std::cout << "Trying: ";
 
 		for (auto const& p : places) {
@@ -93,6 +94,7 @@ int main(int argc, char **argv)
 		}
 
 		std::cout << std::endl;
+		*/
 
 		int d = 0;
 
