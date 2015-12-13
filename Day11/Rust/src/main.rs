@@ -63,8 +63,6 @@ fn main() {
 
     while !is_good(&input) {
         input = increment_string(&input);
-
-        println!("Trying: {}...", input);
     }
 
     println!("Success: {}", input);
