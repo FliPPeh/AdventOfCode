@@ -68,15 +68,17 @@ int main(int argc, char **argv)
 		struct ingredient it = {};
 		long is = 0;
 
-
 		for (j = 0; j < ningredients; ++j) {
 			fs[j] = i/f % AMOUNT;
-			s += fs[j];
 			f *= AMOUNT;
+
+			if ((s += fs[j]) > AMOUNT) {
+				goto out;
+			}
 		}
 
 		if (s != AMOUNT) {
-			continue;
+			goto out;
 		}
 
 		for (j = 0; j < ningredients; ++j) {
