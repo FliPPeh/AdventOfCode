@@ -58,7 +58,9 @@ int main(int argc, char **argv)
 		for (j = 0; j < num_containers; ++j) {
 			if ((set[j] = !!(i & (1 << j)))) {
 				++setc;
-				s += containers[j];
+				if ((s += containers[j]) > EGGNOG) {
+					goto nope;
+				}
 			}
 		}
 
@@ -88,6 +90,8 @@ int main(int argc, char **argv)
 				++c2;
 			}
 		}
+nope:
+		;
 	}
 
 	printf("Combinations: %d\nMinimum: %d\n", c1, c2);
