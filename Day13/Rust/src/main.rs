@@ -10,12 +10,11 @@ trait StreamingIterator<'a> {
 }
 
 struct PermutationIterator<T> {
-    s: Box<[T]>
+    s: Box<[T]>,
 }
 
-impl<'a, T> StreamingIterator<'a> for PermutationIterator<T>
-    where T: Clone + Ord + 'a {
-
+impl<'a, T> StreamingIterator<'a> for PermutationIterator<T> where T: Clone + Ord + 'a
+{
     type Item = &'a [T];
 
     fn next(&'a mut self) -> Option<Self::Item> {
@@ -61,7 +60,7 @@ fn main() {
         let mut line = String::new();
         let res = match std::io::stdin().read_line(&mut line).expect("error") {
             0 => break,
-            _ => line.trim().split(" ").collect::<Vec<&str>>()
+            _ => line.trim().split(" ").collect::<Vec<&str>>(),
         };
 
         match res.as_slice() {
@@ -80,7 +79,7 @@ fn main() {
 
                 uniq.insert(a.to_owned());
                 uniq.insert(br);
-            },
+            }
 
             _ => panic!("wat"),
         }
@@ -102,31 +101,29 @@ fn main() {
     while let Some(perm) = pi.next() {
         let mut sum = 0_i32;
 
-        for i in 0 .. perm.len() {
+        for i in 0..perm.len() {
             // Add happiness to the left
             if i > 0 {
-                sum += *rel.get(&(
-                        perm[i].clone(),
-                        perm[i - 1].clone())).unwrap();
+                sum += *rel.get(&(perm[i].clone(), perm[i - 1].clone()))
+                           .unwrap();
             } else {
-                sum += *rel.get(&(
-                        perm[i].clone(),
-                        perm[perm.len() - 1].clone())).unwrap();
+                sum += *rel.get(&(perm[i].clone(), perm[perm.len() - 1].clone()))
+                           .unwrap();
             }
 
             // And then look to the right
             if i < perm.len() - 1 {
-                sum += *rel.get(&(
-                        perm[i].clone(),
-                        perm[i + 1].clone())).unwrap();
+                sum += *rel.get(&(perm[i].clone(), perm[i + 1].clone()))
+                           .unwrap();
             } else {
-                sum += *rel.get(&(
-                        perm[i].clone(),
-                        perm[0].clone())).unwrap();
+                sum += *rel.get(&(perm[i].clone(), perm[0].clone()))
+                           .unwrap();
             }
         }
 
-        if sum > max { max = sum; }
+        if sum > max {
+            max = sum;
+        }
     }
 
     println!("{}", max);

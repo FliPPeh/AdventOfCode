@@ -28,7 +28,7 @@ fn is_nice_v1(s: &str) -> bool {
 }
 
 fn is_nice_v2(s: &str) -> bool {
-    let mut has_rep= false;
+    let mut has_rep = false;
     let mut has_pair = false;
 
     let mut c = s.chars();
@@ -41,10 +41,16 @@ fn is_nice_v2(s: &str) -> bool {
             let pair: String = i.clone().take(2).collect();
             let rest: String = i.clone().skip(2).collect();
 
-            if !has_pair && rest.clone().contains(&pair) { has_pair = true; }
-            if !has_rep  && cr == i.clone().nth(2)       { has_rep = true; }
+            if !has_pair && rest.clone().contains(&pair) {
+                has_pair = true;
+            }
+            if !has_rep && cr == i.clone().nth(2) {
+                has_rep = true;
+            }
 
-            if has_pair && has_rep { return true; }
+            if has_pair && has_rep {
+                return true;
+            }
         } else {
             break;
         }
@@ -71,7 +77,7 @@ fn main() {
                 if is_nice_v2(trimmed_line) {
                     nice_strings_v2.push(trimmed_line.to_owned());
                 }
-            },
+            }
 
             Err(e) => panic!("error: {}", e),
         }

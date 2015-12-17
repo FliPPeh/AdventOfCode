@@ -16,15 +16,23 @@ const H: usize = 1000;
 
 type Grid = [[u32; W]; H];
 type Rect = (usize, usize, usize, usize);
-enum Action { Toggle, Activate, Deactivate }
+enum Action {
+    Toggle,
+    Activate,
+    Deactivate,
+}
 
 fn apply(a: Action, r: Rect, grid: &mut Grid) {
-    for y in r.0 .. r.2 + 1 {
-        for x in r.1 .. r.3 + 1 {
+    for y in r.0..r.2 + 1 {
+        for x in r.1..r.3 + 1 {
             match a {
                 Action::Toggle => grid[y][x] += 2,
                 Action::Activate => grid[y][x] += 1,
-                Action::Deactivate => if grid[y][x] > 0 { grid[y][x] -= 1; }
+                Action::Deactivate => {
+                    if grid[y][x] > 0 {
+                        grid[y][x] -= 1;
+                    }
+                }
             }
         }
     }
@@ -42,29 +50,30 @@ fn main() {
                 let r: Vec<&str> = line.trim().split(" ").collect();
 
                 match r[0] {
-                    "turn" => match r[1] {
-                        "on" | "off" => {
-                            let rect = get_rect(r[2], r[4]);
-                            let act = if r[1] == "on" {
-                                Action::Activate
-                            } else {
-                                Action::Deactivate
-                            };
+                    "turn" => {
+                        match r[1] {
+                            "on" | "off" => {
+                                let rect = get_rect(r[2], r[4]);
+                                let act = if r[1] == "on" {
+                                    Action::Activate
+                                } else {
+                                    Action::Deactivate
+                                };
 
-                            apply(act, rect, &mut grid);
+                                apply(act, rect, &mut grid);
+                            }
+
+                            _ => panic!("bad command 'turn {}'", r[1]),
                         }
+                    }
 
-                        _ => panic!("bad command 'turn {}'", r[1]),
-                    },
+                    "toggle" => apply(Action::Toggle, get_rect(r[1], r[3]), &mut grid),
 
-                    "toggle" =>
-                        apply(Action::Toggle, get_rect(r[1], r[3]), &mut grid),
-
-                    _ => panic!("bad command '{}'", r[0])
+                    _ => panic!("bad command '{}'", r[0]),
                 }
             }
 
-            Err(e) => panic!("error: {}", e)
+            Err(e) => panic!("error: {}", e),
         }
     }
 
@@ -81,5 +90,7 @@ fn main() {
         }
     }
 
-    println!("Total brightness: {} ({} lights turned on)", brightness, count);
+    println!("Total brightness: {} ({} lights turned on)",
+             brightness,
+             count);
 }

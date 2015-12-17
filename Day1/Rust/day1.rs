@@ -28,7 +28,8 @@ fn main() {
 
     if let Some(basement_position) = basement {
         println!("Finished on level {}, first entered basement at move {}.",
-             level, basement_position);
+                 level,
+                 basement_position);
     } else {
         println!("Finished on level {}, never entered basement.", level);
     }

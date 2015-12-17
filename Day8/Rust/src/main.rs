@@ -1,7 +1,7 @@
 enum ReadState {
     Simple,
     EscapeInit,
-    EscapeSeq(i8)
+    EscapeSeq(i8),
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -22,10 +22,16 @@ fn count(s: &str) -> Triplet {
     for c in s.chars() {
         match state {
             ReadState::Simple => {
-                if c == '\\' { state = ReadState::EscapeInit; }
-                if c == '"' || c == '\\' { r.2 += 1; }
-                if c != '"' || c == '\\' { r.0 += 1; }
-            },
+                if c == '\\' {
+                    state = ReadState::EscapeInit;
+                }
+                if c == '"' || c == '\\' {
+                    r.2 += 1;
+                }
+                if c != '"' || c == '\\' {
+                    r.0 += 1;
+                }
+            }
 
             ReadState::EscapeSeq(1) => state = ReadState::Simple,
             ReadState::EscapeSeq(n) => state = ReadState::EscapeSeq(n - 1),
@@ -35,13 +41,13 @@ fn count(s: &str) -> Triplet {
                     '"' | '\\' => {
                         r.2 += 1; // \\ | \"
                         ReadState::Simple
-                    },
+                    }
 
                     // Start of \x sequence, goes on for 2 more chars
                     'x' => ReadState::EscapeSeq(2),
-                    _   => panic!("illegal escape: {}", c)
+                    _ => panic!("illegal escape: {}", c),
                 }
-            },
+            }
         }
     }
 
@@ -60,7 +66,7 @@ fn main() {
             Err(e) => panic!("error: {}", e),
 
             Ok(0) => break,
-            Ok(_) => total = total + count(&line.trim())
+            Ok(_) => total = total + count(&line.trim()),
         }
     }
 

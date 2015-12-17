@@ -37,8 +37,8 @@ fn main() {
 
     if !input.chars().all(|n| n.is_digit(10)) {
         println!("{}: '{}' is not all-numeric",
-            env::args().nth(0).unwrap(),
-            input);
+                 env::args().nth(0).unwrap(),
+                 input);
 
         return;
     }

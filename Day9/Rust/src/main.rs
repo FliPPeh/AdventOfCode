@@ -11,12 +11,11 @@ trait StreamingIterator<'a> {
 }
 
 struct PermutationIterator<T> {
-    s: Box<[T]>
+    s: Box<[T]>,
 }
 
-impl<'a, T> StreamingIterator<'a> for PermutationIterator<T>
-    where T: Clone + Ord + 'a {
-
+impl<'a, T> StreamingIterator<'a> for PermutationIterator<T> where T: Clone + Ord + 'a
+{
     type Item = &'a [T];
 
     fn next(&'a mut self) -> Option<Self::Item> {
@@ -62,31 +61,29 @@ fn main() {
         let mut line = String::new();
         let res = match std::io::stdin().read_line(&mut line).expect("error") {
             0 => break,
-            _ => line.trim().split(" ").collect::<Vec<&str>>()
+            _ => line.trim().split(" ").collect::<Vec<&str>>(),
         };
 
         match res.as_slice() {
             [start, "to", end, "=", cost] => {
                 println!("'{}' -> '{}' ({})",
-                    start,
-                    end,
-                    cost.parse::<i32>().unwrap());
+                         start,
+                         end,
+                         cost.parse::<i32>().unwrap());
 
                 places.insert(start.to_owned());
                 places.insert(end.to_owned());
 
-                distances.insert((
-                        places.get(end).unwrap().clone(),
-                        places.get(start).unwrap().clone()),
-                    cost.parse().unwrap());
+                distances.insert((places.get(end).unwrap().clone(),
+                                  places.get(start).unwrap().clone()),
+                                 cost.parse().unwrap());
 
-                distances.insert((
-                        places.get(start).unwrap().clone(),
-                        places.get(end).unwrap().clone()),
-                    cost.parse().unwrap());
-            },
+                distances.insert((places.get(start).unwrap().clone(),
+                                  places.get(end).unwrap().clone()),
+                                 cost.parse().unwrap());
+            }
 
-            _ => panic!("bad input: {:?}", res)
+            _ => panic!("bad input: {:?}", res),
         }
     }
 
@@ -103,18 +100,21 @@ fn main() {
     let mut max = std::i32::MIN;
 
     while let Some(perm) = pi.next() {
-        //println!("{:?}", perm);
+        // println!("{:?}", perm);
 
         let mut sum = 0_i32;
 
-        for i in 0 .. perm.len() - 1 {
-            sum += *distances.get(
-                &(perm[i    ].clone(),
-                  perm[i + 1].clone())).unwrap();
+        for i in 0..perm.len() - 1 {
+            sum += *distances.get(&(perm[i].clone(), perm[i + 1].clone()))
+                             .unwrap();
         }
 
-        if sum > max { max = sum; }
-        if sum < min { min = sum; }
+        if sum > max {
+            max = sum;
+        }
+        if sum < min {
+            min = sum;
+        }
     }
 
     println!("Min: {}, Max: {}", min, max);

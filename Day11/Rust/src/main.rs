@@ -3,24 +3,27 @@ use std::*;
 use std::collections::HashSet;
 
 fn increment_string(s: &str) -> String {
-    s.chars().rev().fold(("".to_owned(), true), |mut acc, c| {
-        if acc.1 {
-            if c == 'z' {
-                acc.0.insert(0, 'a'); // wrap over, keep carrying
+    s.chars()
+     .rev()
+     .fold(("".to_owned(), true), |mut acc, c| {
+         if acc.1 {
+             if c == 'z' {
+                 acc.0.insert(0, 'a'); // wrap over, keep carrying
 
-                if acc.0.len() == s.len() {
-                    acc.0.insert(0, 'a');
-                }
-            } else {
-                acc.0.insert(0, char::from_u32(c as u32 + 1).unwrap());
-                acc.1 = false;
-            }
-        } else {
-            acc.0.insert(0, c);
-        }
+                 if acc.0.len() == s.len() {
+                     acc.0.insert(0, 'a');
+                 }
+             } else {
+                 acc.0.insert(0, char::from_u32(c as u32 + 1).unwrap());
+                 acc.1 = false;
+             }
+         } else {
+             acc.0.insert(0, c);
+         }
 
-        acc
-    }).0
+         acc
+     })
+     .0
 }
 
 fn is_good(s: &str) -> bool {
@@ -56,7 +59,7 @@ fn main() {
         None => {
             println!("usage: {} <password>", env::args().nth(0).unwrap());
             return;
-        },
+        }
 
         Some(p) => p,
     };
