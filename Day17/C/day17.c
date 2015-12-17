@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 			printf(", ");
 		}
 	}
-	printf("} = %d\n", EGGNOG);
+	printf("} => %d\n", EGGNOG);
 #endif
 
 	set = calloc(num_containers, sizeof(int));
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 					}
 				}
 			}
-			printf("} == 150\n");
+			printf("} = %d\n", EGGNOG);
 #endif
 			/* First match we find will also be the minimum match */
 			if (!c1) {
@@ -89,9 +89,6 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-
-	free(set);
-	free(containers);
 
 	printf("Combinations: %d\nMinimum: %d\n", c1, c2);
 }
