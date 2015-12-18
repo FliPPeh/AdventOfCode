@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 const STEPS: i32 = 5;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 enum Light {
     Off,
     On,
@@ -17,18 +17,11 @@ impl Light {
     }
 
     fn tick(&mut self, n: i32) {
-        match *self {
-            Light::On => {
-                if n != 2 && n != 3 {
-                    *self = Light::Off;
-                }
-            }
-            Light::Off => {
-                if n == 3 {
-                    *self = Light::On;
-                }
-            }
-            Light::Sticky => {}
+        *self = match *self {
+            Light::On if n != 2 && n != 3 => Light::Off,
+            Light::Off if n == 3 => Light::On,
+
+            _ => *self,
         }
     }
 }
@@ -109,7 +102,7 @@ impl Grid {
     fn count_neighbors(&self, i: i32, j: i32) -> i32 {
         let mut n = 0;
 
-        for (k, l) in (-1, -1)..(2, 2) {
+        for k in -1..2 {
             for l in -1..2 {
                 if !(k == 0 && l == 0) {
                     if self.grid[(i + k) as usize][(j + l) as usize].is_on() {
