@@ -2,7 +2,7 @@ use std::io;
 use std::fmt::{self, Display};
 use std::str::FromStr;
 
-const STEPS: i32 = 100;
+const STEPS: i32 = 5;
 
 #[derive(Debug, Clone, PartialEq)]
 enum Light {
@@ -16,8 +16,20 @@ impl Light {
         return *self == Light::On || *self == Light::Sticky;
     }
 
-    fn is_sticky(&self) -> bool {
-        return *self == Light::Sticky;
+    fn tick(&mut self, n: i32) {
+        match *self {
+            Light::On => {
+                if n != 2 && n != 3 {
+                    *self = Light::Off;
+                }
+            }
+            Light::Off => {
+                if n == 3 {
+                    *self = Light::On;
+                }
+            }
+            Light::Sticky => {}
+        }
     }
 }
 
@@ -63,15 +75,29 @@ impl Grid {
         let w = input[0].len();
         let mut grid = Vec::new();
 
+        let mut offrow = Vec::new();
+
+        for _ in 0..w + 2 {
+            offrow.push(Light::Off);
+        }
+
+        grid.push(offrow.clone());
+
         for l in input {
             if l.len() != w {
                 return None;
             }
 
-            grid.push(l.chars()
-                       .map(|c| c.to_string().parse().expect("bad grid char"))
-                       .collect());
+            let mut row = l.chars()
+                           .map(|c| c.to_string().parse().expect("bad grid char"))
+                           .collect::<Vec<_>>();
+            row.insert(w, Light::Off);
+            row.insert(0, Light::Off);
+
+            grid.push(row);
         }
+
+        grid.push(offrow);
 
         Some(Grid {
             width: w as i32,
@@ -83,16 +109,12 @@ impl Grid {
     fn count_neighbors(&self, i: i32, j: i32) -> i32 {
         let mut n = 0;
 
-        for k in -1..2 {
+        for (k, l) in (-1, -1)..(2, 2) {
             for l in -1..2 {
-                if (k == 0 && l == 0) || (j + l) < 0 || (j + l) >= self.height || (i + k) < 0 ||
-                   (i + k) >= self.width {
-
-                    continue;
-                }
-
-                if self.grid[(i + k) as usize][(j + l) as usize].is_on() {
-                    n += 1;
+                if !(k == 0 && l == 0) {
+                    if self.grid[(i + k) as usize][(j + l) as usize].is_on() {
+                        n += 1;
+                    }
                 }
             }
         }
@@ -103,19 +125,11 @@ impl Grid {
     fn step(&mut self) {
         let old = self.clone();
 
-        for i in 0..self.height {
-            for j in 0..self.width {
-                let n = old.count_neighbors(i, j);
+        for i in 1..self.height + 1 {
+            for j in 1..self.width + 1 {
                 let (iu, ju) = (i as usize, j as usize);
 
-                if !self.grid[iu][ju].is_sticky() {
-                    self.grid[iu][ju] = if (old.grid[iu][ju].is_on() && (n == 2 || n == 3)) ||
-                                           n == 3 {
-                        Light::On
-                    } else {
-                        Light::Off
-                    }
-                }
+                self.grid[iu][ju].tick(old.count_neighbors(i, j));
             }
         }
     }
@@ -123,9 +137,9 @@ impl Grid {
 
 impl Display for Grid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for row in &self.grid {
-            for point in row {
-                try!(write!(f, "{}", point));
+        for i in 1..self.width + 1 {
+            for j in 1..self.height + 1 {
+                try!(write!(f, "{}", self.grid[i as usize][j as usize]));
             }
 
             try!(write!(f, "\n"));
