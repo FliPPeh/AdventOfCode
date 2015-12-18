@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef DELAY
+#	include <unistd.h>
+#endif
+
 #ifndef STEPS
 #	define STEPS 5
 #endif
@@ -145,6 +149,10 @@ int main(int argc, char **argv)
 
 		grid = grid2;
 		grid2 = temp;
+
+#ifdef DELAY
+		usleep(10e2 * DELAY);
+#endif
 	}
 
 	for (i = 0; i < grid_height; ++i) {
