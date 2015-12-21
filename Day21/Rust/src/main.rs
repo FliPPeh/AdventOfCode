@@ -55,7 +55,7 @@ impl Shop {
     }
 
     fn sorted_selection(cat: &ShopCategory) -> Vec<&'static str> {
-        let mut k = cat.keys().cloned().collect::<Vec<&'static str>>();
+        let mut k = cat.keys().cloned().collect::<Vec<&str>>();
         k.sort_by(|i1, i2| cat.get(i1).unwrap().1.cmp(&cat.get(i2).unwrap().1));
         k
     }
@@ -114,7 +114,7 @@ impl Player {
             .fold(0, |acc, &(_, _, a)| acc + a)
     }
 
-    fn buy(slot: &mut Option<(&'static str, i32, i32)>,
+    fn buy(slot: &mut Option<(&str, i32, i32)>,
            shop_category: &mut ShopCategory,
            item_name: &'static str)
            -> Option<i32> {
@@ -236,8 +236,8 @@ impl Entity for Foe {
 fn main() {
     let mut shop = Shop::new();
 
-    let mut least_gold = (vec![], i32::max_value());
-    let mut most_gold = (vec![], i32::min_value());
+    let mut least_gold = (Vec::<Option<&'static str>>::new(), i32::max_value());
+    let mut most_gold = (Vec::<Option<&'static str>>::new(), i32::min_value());
 
     for weapon in shop.weapon_selection() {
         for armor in [None]
@@ -263,18 +263,9 @@ fn main() {
                     let mut player = Player::new();
 
                     player.buy_weapon(&mut shop, weapon);
-
-                    if let Some(a) = armor {
-                        player.buy_armor(&mut shop, a);
-                    }
-
-                    if let Some(r1) = ring1 {
-                        player.buy_ring(&mut shop, r1);
-                    }
-
-                    if let Some(r2) = ring2 {
-                        player.buy_ring(&mut shop, r2);
-                    }
+                    armor.map(|a| player.buy_armor(&mut shop, a));
+                    ring1.map(|r1| player.buy_ring(&mut shop, r1));
+                    ring2.map(|r2| player.buy_ring(&mut shop, r2));
 
                     while foe.hitpoints() > 0 && player.hitpoints() > 0 {
                         // player turn
@@ -289,8 +280,8 @@ fn main() {
                                 // println!("Player deals {} damage - the boss dies in agony.", d);
 
                                 if -player.gold < least_gold.1 {
-                                    least_gold.0 = vec![Some(weapon), armor, ring1, ring2];
-                                    least_gold.1 = -player.gold;
+                                    least_gold = (vec![Some(weapon), armor, ring1, ring2],
+                                                  -player.gold)
                                 }
 
                                 break;
@@ -308,8 +299,7 @@ fn main() {
                             // println!("The boss deals {} damage - the player dies in agony.", d2);
 
                             if -player.gold > most_gold.1 {
-                                most_gold.0 = vec![Some(weapon), armor, ring1, ring2];
-                                most_gold.1 = -player.gold;
+                                most_gold = (vec![Some(weapon), armor, ring1, ring2], -player.gold);
                             }
 
                             break;
