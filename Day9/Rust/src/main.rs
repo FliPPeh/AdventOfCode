@@ -1,6 +1,4 @@
-#![feature(slice_patterns)]
-#![feature(convert)]
-#![feature(set_recovery)]
+#![feature(slice_patterns, set_recovery)]
 
 use std::collections::{HashSet, HashMap};
 
@@ -64,7 +62,7 @@ fn main() {
             _ => line.trim().split(" ").collect::<Vec<&str>>(),
         };
 
-        match res.as_slice() {
+        match &res[..] {
             [start, "to", end, "=", cost] => {
                 println!("'{}' -> '{}' ({})",
                          start,

@@ -1,5 +1,4 @@
 #![feature(slice_patterns)]
-#![feature(convert)]
 
 use std::collections::{HashMap, HashSet};
 
@@ -63,7 +62,7 @@ fn main() {
             _ => line.trim().split(" ").collect::<Vec<&str>>(),
         };
 
-        match res.as_slice() {
+        match &res[..] {
             [a, "would", o, n, "happiness", "units",
                 "by", "sitting", "next", "to", b] => {
                 let nr = if o == "gain" {

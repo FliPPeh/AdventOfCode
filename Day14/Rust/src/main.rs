@@ -1,4 +1,4 @@
-#![feature(slice_patterns, convert)]
+#![feature(slice_patterns)]
 
 use std::collections::HashMap;
 use std::cell::RefCell;
@@ -66,7 +66,7 @@ fn main() {
             _ => line.trim().split(" ").collect::<Vec<&str>>(),
         };
 
-        match res.as_slice() {
+        match &res[..] {
             [name, "can", "fly", kms, "km/s", "for", n, "seconds,", "but",
             "then", "must", "rest", "for", r, "seconds."] => {
                 reindeer.insert(name.to_owned(),

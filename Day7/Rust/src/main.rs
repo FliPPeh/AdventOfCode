@@ -1,4 +1,3 @@
-#![feature(convert)]
 #![feature(slice_patterns)]
 
 use std::collections::HashMap;
@@ -90,7 +89,7 @@ fn main() {
             Ok(_) => {
                 let r: Vec<&str> = line.trim().split(" ").collect();
 
-                instructions.push(match r.as_slice() {
+                instructions.push(match &r[..] {
                     [a, "AND", b, "->", r] => {
                         (r.to_owned(),
                          Instruction::And(Operand::new(a), Operand::new(b)))

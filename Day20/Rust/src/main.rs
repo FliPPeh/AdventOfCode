@@ -16,10 +16,12 @@ fn part2(presents: &mut [i64]) {
         let mut steps = 50;
 
         for j in (i..presents.len()).step_by(i) {
-            if steps > 0 {
-                presents[j - 1] += i as i64 * 11;
-                steps -= 1;
+            if steps == 0 {
+                break;
             }
+
+            presents[j - 1] += i as i64 * 11;
+            steps -= 1;
         }
     }
 }
