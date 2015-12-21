@@ -243,19 +243,24 @@ fn main() {
         for armor in [None]
                          .iter()
                          .cloned()
-                         .chain(shop.armor_selection().iter().map(|&i| Some(i))) {
+                         .chain(shop.armor_selection()
+                                    .iter()
+                                    .map(|&i| Some(i))) {
             for ring1 in [None]
                              .iter()
                              .cloned()
-                             .chain(shop.ring_selection().iter().map(|&i| Some(i))) {
+                             .chain(shop.ring_selection()
+                                        .iter()
+                                        .map(|&i| Some(i))) {
                 for ring2 in [None]
                                  .iter()
                                  .cloned()
-                                 .chain(shop.ring_selection().iter().map(|&i| Some(i))) {
+                                 .chain(shop.ring_selection()
+                                            .iter()
+                                            .map(|&i| Some(i))) {
 
                     let mut foe = Foe::new();
                     let mut player = Player::new();
-
 
                     player.buy_weapon(&mut shop, weapon);
 
