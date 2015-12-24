@@ -26,11 +26,7 @@ type Registers = HashMap<char, i64>;
 fn map_register<F>(rs: &mut Registers, r: char, mut f: F)
     where F: FnMut(i64) -> i64
 {
-    if !rs.contains_key(&r) {
-        rs.insert(r, 0);
-    }
-
-    let v = rs.get_mut(&r).unwrap();
+    let v = rs.entry(r).or_insert(0);
     *v = f(*v);
 }
 
